@@ -1,4 +1,19 @@
 @import "tailwindcss";
  @plugin "daisyui" {
-   themes: light
+   themes: light --default, dark --prefersdark;
  }
+
+@font-face {
+  font-family: Montserrat;
+  src: url('/assets/fonts/Montserrat-Medium.ttf');
+ }
+
+ @theme {
+  --font-montserrat: Montserrat
+ }
+
+ @layer utilities {
+  .font-montserrat {
+    font-family: var(--font-montserrat);
+  }
+}
