@@ -9,11 +9,21 @@
  }
 
  @theme {
-  --font-montserrat: Montserrat
+  --font-montserrat: Montserrat;
+  --animate-fade-in: fade-in 0.4s ease-in-out;
  }
 
  @layer utilities {
   .font-montserrat {
     font-family: var(--font-montserrat);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }
