@@ -1,11 +1,12 @@
 import { SlicePipe } from '@angular/common';
 import { Component, computed, input } from '@angular/core';
 import { RouterLink } from "@angular/router";
+import { ProductImagePipe } from '@products/pipes/product-image-pipe';
 import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'product-card',
-  imports: [RouterLink, SlicePipe],
+  imports: [RouterLink, SlicePipe, ProductImagePipe],
   templateUrl: './product-card.html',
 })
 export class ProductCard {
@@ -13,8 +14,4 @@ export class ProductCard {
   title = input.required<string>();
   description = input.required<string>();
   imageUrl = input.required<string>();
-
-  baseUrl = computed(() =>
-    `${environment.baseUrl}/files/product/${this.imageUrl()}`
-  );
 }
