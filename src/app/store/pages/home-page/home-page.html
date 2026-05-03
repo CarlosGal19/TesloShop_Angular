@@ -2,7 +2,9 @@
 <h2 class="text-xl mb-5">For everyone</h2>
 
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-2 gap-3">
-  @for (product of [1, 2, 3, 4, 5]; track $index) {
-    <product-card />
+  @if (!productsResource.isLoading()) {
+    @for (product of productsResource.value()?.products; track $index) {
+      <product-card [productId]="product.id" [description]="product.description" [imageUrl]="product.images[0]" [title]="product.title" />
+    }
   }
 </div>
