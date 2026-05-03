@@ -18,7 +18,7 @@ interface IOptions {
 export class ProductsService {
   private http = inject(HttpClient)
 
-  getProducts(options: IOptions) {
+  getProducts(options: IOptions): Observable<IProductsResponse> {
 
     const { limit = 9, offset = 0, gender = '' } = options
 
