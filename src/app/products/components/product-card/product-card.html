@@ -1,14 +1,14 @@
 <div class="card bg-base-100 shadow-sm animate-fade-in">
   <figure>
     <img
-      src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.webp"
+      [src]="baseUrl()"
       alt="Shoes" />
   </figure>
   <div class="card-body">
-    <h2 class="card-title">Card Title</h2>
-    <p>A card component has a figure, a body part, and inside body there are title and actions parts</p>
+    <h2 class="card-title">{{title()}}</h2>
+    <p>{{description().slice(0, 100)}}...</p>
     <div class="card-actions justify-end">
-      <a [routerLink]="['product', 'jaja si']" class="link link-accent">Buy Now</a>
+      <a [routerLink]="['product', productId()]" class="link link-accent">Buy Now</a>
     </div>
   </div>
 </div>
