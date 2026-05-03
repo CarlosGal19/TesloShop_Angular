@@ -8,8 +8,8 @@
 @if( productResource.hasValue() ) {
 
 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-  <p>Imágenes</p>
-  <!-- <product-carousel [images]="productResource.value()?.images ?? []" /> -->
+  <!-- <p>Imágenes</p> -->
+  <product-carousel [images]="productResource.value().images" />
 
   <!--  -->
   <div>
