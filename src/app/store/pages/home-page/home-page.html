@@ -8,3 +8,5 @@
     }
   }
 </div>
+
+<pagination [pagesAmount]="productsResource.value()?.pages ?? 0" [currentPage]="paginationService.currentPage()"></pagination>
