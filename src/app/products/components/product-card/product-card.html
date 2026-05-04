@@ -8,7 +8,7 @@
     <a [routerLink]="['product', productId()]"><h2 class="card-title text-accent">{{title()}}</h2></a>
     <p>{{description() | slice:0:70}}...</p>
     <div class="card-actions justify-end">
-      <a [routerLink]="['product', productId()]" class="link link-accent">Buy Now</a>
+      <a [routerLink]="['/product', productId()]" class="link link-accent">Buy Now</a>
     </div>
   </div>
 </div>
