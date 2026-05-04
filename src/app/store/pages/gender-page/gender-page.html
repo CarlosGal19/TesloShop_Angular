@@ -16,3 +16,5 @@
   <p>No hay productos</p>
   }
 </div>
+
+<pagination [pagesAmount]="genderProductsResource.value()?.pages ?? 0" [currentPage]="paginationService.currentPage()"></pagination>
