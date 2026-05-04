@@ -5,7 +5,7 @@
 <h2 class="text-xl mb-5">Something for everyone</h2>
 
 <div
-  class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-2 gap-3"
+  class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mt-2 gap-3"
 >
   @for (product of genderProductsResource.value()!.products; track $index) {
     <product-card [productId]="product.id" [description]="product.description" [imageUrl]="product.images[0]" [title]="product.title" />
