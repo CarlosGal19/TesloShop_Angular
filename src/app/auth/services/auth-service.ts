@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { IAuthResponse } from '@auth/interfaces/auth-response.interface';
 import { IUser } from '@auth/interfaces/user.interface';
-import { tap } from 'rxjs';
+import { catchError, map, Observable, of, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 type AuthStatus = 'checking' | 'auth' | 'not-auth';
@@ -29,7 +29,7 @@ export class AuthService {
 
   http = inject(HttpClient);
 
-  login(email: string, password: string) {
+  login(email: string, password: string): Observable<boolean> {
     return this.http.post<IAuthResponse>(`${baseUrl}/auth/login`, {
       email,
       password
@@ -40,6 +40,16 @@ export class AuthService {
         this._token.set(response.token);
 
         localStorage.setItem('authToken', response.token);
+      }),
+      map(() => true),
+      catchError((error: any) => {
+        this._authStatus.set('not-auth');
+        this._user.set(null);
+        this._token.set(null);
+
+        localStorage.removeItem('authToken');
+
+        return of(false);
       })
     )
   };
