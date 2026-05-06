@@ -41,7 +41,7 @@ export class Login {
         }, 2000);
         return;
       }
-      this.router.navigate(['/products']);
+      this.router.navigate(['/']);
     })
   }
 }
