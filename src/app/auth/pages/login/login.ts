@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms'
 import { RouterLink } from "@angular/router";
+import { AuthService } from '@auth/services/auth-service';
 
 @Component({
   selector: 'login',
@@ -8,6 +9,9 @@ import { RouterLink } from "@angular/router";
   templateUrl: './login.html',
 })
 export class Login {
+
+  authService = inject(AuthService);
+
   formBuilder = inject(FormBuilder);
   hasError = signal<boolean>(false);
   isPosting = signal<boolean>(false);
@@ -25,6 +29,11 @@ export class Login {
       }, 2000);
       return;
     }
-    console.log(this.loginForm.value)
+
+    const { email, password } = this.loginForm.value;
+
+    this.authService.login(email!, password!).subscribe(response => {
+      console.log(response)
+    })
   }
 }
