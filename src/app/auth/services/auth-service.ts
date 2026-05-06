@@ -39,20 +39,10 @@ export class AuthService {
       email,
       password
     }).pipe(
-      tap(response => {
-        this._authStatus.set('auth');
-        this._user.set(response.user);
-        this._token.set(response.token);
-
-        localStorage.setItem('authToken', response.token);
-      }),
+      tap(response => this.handleLoginSuccess(response)),
       map(() => true),
       catchError((error: any) => {
-        this._authStatus.set('not-auth');
-        this._user.set(null);
-        this._token.set(null);
-
-        localStorage.removeItem('authToken');
+        this.logout()
 
         return of(false);
       })
@@ -62,6 +52,7 @@ export class AuthService {
   checkStatus(): Observable<boolean> {
     const authToken = localStorage.getItem('authToken') as string;
     if (!authToken) {
+      this.logout()
       return of(false);
     }
 
@@ -70,25 +61,29 @@ export class AuthService {
         Authorization: `Bearer ${authToken}`
       }
     }).pipe(
-      tap(response => {
-        this._authStatus.set('auth');
-        this._user.set(response.user);
-        this._token.set(response.token);
-
-        localStorage.setItem('authToken', response.token);
-      }),
+      tap(response => this.handleLoginSuccess(response)),
       map(() => true),
       catchError((error: any) => {
-        this._authStatus.set('not-auth');
-        this._user.set(null);
-        this._token.set(null);
-
-        localStorage.removeItem('authToken');
+        this.logout()
 
         return of(false);
       })
     )
+  }
 
-    return of(true);
+  logout() {
+    this._authStatus.set('not-auth');
+    this._user.set(null);
+    this._token.set(null);
+
+    localStorage.removeItem('authToken');
+  }
+
+  private handleLoginSuccess(data: IAuthResponse) {
+    this._authStatus.set('auth');
+    this._user.set(data.user);
+    this._token.set(data.token);
+
+    localStorage.setItem('authToken', data.token);
   }
 }
