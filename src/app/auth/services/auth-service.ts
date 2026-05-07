@@ -16,7 +16,7 @@ export class AuthService {
 
   private _authStatus = signal<AuthStatus>('checking');
   private _user = signal<IUser | null>(null);
-  private _token = signal<string | null>(null);
+  private _token = signal<string | null>(localStorage.getItem('authToken'));
 
   authStatus = computed(() => {
     if (this._authStatus() === 'checking') return 'checking';
@@ -50,17 +50,8 @@ export class AuthService {
   };
 
   checkStatus(): Observable<boolean> {
-    const authToken = localStorage.getItem('authToken') as string;
-    if (!authToken) {
-      this.logout()
-      return of(false);
-    }
 
-    return this.http.get<IAuthResponse>(`${baseUrl}/auth/check-status`, {
-      headers: {
-        Authorization: `Bearer ${authToken}`
-      }
-    }).pipe(
+    return this.http.get<IAuthResponse>(`${baseUrl}/auth/check-status`).pipe(
       tap(response => this.handleLoginSuccess(response)),
       map(() => true),
       catchError((error: any) => {
