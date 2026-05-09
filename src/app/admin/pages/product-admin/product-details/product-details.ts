@@ -4,10 +4,11 @@ import { ProductCarousel } from "@products/components/product-carousel/product-c
 import { IProduct } from '@products/interfaces/product-response.interface';
 import { ProductsService } from '@products/services/products.service';
 import { FormUtils } from '@utils/form-utils';
+import { FormErrorLabel } from "@shared/components/form-error-label/form-error-label";
 
 @Component({
   selector: 'product-details',
-  imports: [ProductCarousel, ReactiveFormsModule],
+  imports: [ProductCarousel, ReactiveFormsModule, FormErrorLabel],
   templateUrl: './product-details.html',
 })
 export class ProductDetails implements OnInit {
