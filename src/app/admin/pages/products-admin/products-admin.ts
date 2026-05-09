@@ -26,11 +26,7 @@ export class ProductsAdmin {
       return this.productsService.getProducts({
         limit: params.limit,
         offset: (params.page - 1) * params.limit
-      }).pipe(
-        tap(data => {
-          console.log(data);
-        })
-      );
+      })
       }
   })
 }
