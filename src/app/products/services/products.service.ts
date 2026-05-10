@@ -2,7 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
 import { IUser } from "@auth/interfaces/user.interface";
 import { IGender, IProduct, IProductsResponse } from "@products/interfaces/product-response.interface";
-import { Observable, of, tap } from "rxjs";
+import { forkJoin, map, Observable, of, tap } from "rxjs";
 import { environment } from "src/environments/environment";
 
 const baseUrl = environment.baseUrl;
@@ -80,7 +80,7 @@ export class ProductsService {
       )
   }
 
-  updateProduct(id: string, likeProduct: Partial<IProduct>) {
+  updateProduct(id: string, likeProduct: Partial<IProduct>, images: FileList | null) {
 
     return this.http.patch<IProduct>(`${baseUrl}/products/${id}`, {
       ...likeProduct
@@ -91,7 +91,7 @@ export class ProductsService {
     )
   }
 
-  createProduct(newProduct: Partial<IProduct>) {
+  createProduct(newProduct: Partial<IProduct>, images: FileList | null) {
 
     return this.http.post<IProduct>(`${baseUrl}/products`, newProduct)
       .pipe(
@@ -109,5 +109,25 @@ export class ProductsService {
     this.productsCache.forEach(productsResponse => {
       productsResponse.products = productsResponse.products.map(product => product.id === id ? newProduct : product );
     })
+  }
+
+  uploadImages(imagesList: FileList | null): Observable<string[]> {
+    if (!imagesList) return of([]);
+
+    const uploadedObservables = Array.from(imagesList)
+      .map(image => this.uploadSingleImage(image));
+
+    return forkJoin(uploadedObservables)
+  }
+
+  uploadSingleImage(image: File): Observable<string> {
+    const formData = new FormData();
+
+    formData.append('file', image);
+
+    return this.http.post<{ fileName: string }>(`${baseUrl}/files/product`, formData)
+      .pipe(
+        map(response => response.fileName)
+      )
   }
 }
