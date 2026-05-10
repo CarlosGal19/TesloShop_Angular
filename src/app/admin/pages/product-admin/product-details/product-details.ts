@@ -48,7 +48,20 @@ export class ProductDetails implements OnInit {
   }
 
   onSubmit() {
-    console.log(this.productForm.value)
+    const isValid = this.productForm.valid;
+    this.productForm.markAllAsTouched();
+    if (!isValid) return;
+
+    const formData = this.productForm.value
+
+    const partialProduct: Partial<IProduct> = {
+      ...(formData as any),
+      tags: formData.tags?.toLocaleLowerCase().split(',').map(t => t.trim()) ?? []
+    }
+
+    const productId = this.product().id
+
+    this.productsService.updateProduct(productId, partialProduct)?.subscribe();
   }
 
   onSizeChanges(size: string) {

@@ -59,4 +59,11 @@ export class ProductsService {
         })
       )
   }
+
+  updateProduct(id: string, likeProduct: Partial<IProduct>) {
+
+    return this.http.patch<IProduct>(`${baseUrl}/products/${id}`, {
+      ...likeProduct
+    })
+  }
 }
