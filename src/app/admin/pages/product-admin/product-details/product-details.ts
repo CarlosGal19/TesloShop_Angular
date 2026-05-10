@@ -22,6 +22,7 @@ export class ProductDetails implements OnInit {
 
   wasSaved = signal(false);
   temporalImages = signal<string[]>([]);
+  imagesFileList: FileList | null = null;
 
   carouselImages = computed(() => {
     return [...this.product().images, ...this.temporalImages()]
@@ -72,13 +73,13 @@ export class ProductDetails implements OnInit {
     if (productId === 'new') {
 
       const product = await firstValueFrom(
-        this.productsService.createProduct(partialProduct)
+        this.productsService.createProduct(partialProduct, this.imagesFileList)
       );
 
       this.router.navigate(['/admin/product', product.id]);
     } else {
       await firstValueFrom(
-        this.productsService.updateProduct(productId, partialProduct)
+        this.productsService.updateProduct(productId, partialProduct, this.imagesFileList)
       );
     }
 
@@ -102,6 +103,7 @@ export class ProductDetails implements OnInit {
 
   onFilesChanges(event: Event) {
     const files = (event.target as HTMLInputElement).files;
+    this.imagesFileList = files;
 
     if (!files) return;
 
