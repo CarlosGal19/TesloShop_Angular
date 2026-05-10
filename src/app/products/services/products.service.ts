@@ -91,8 +91,20 @@ export class ProductsService {
     )
   }
 
+  createProduct(newProduct: Partial<IProduct>) {
+
+    return this.http.post<IProduct>(`${baseUrl}/products`, newProduct)
+      .pipe(
+        tap(product => {
+          this.updateCache(product.id, product);
+        })
+      )
+  }
+
   updateCache(id: string, newProduct: IProduct) {
     this.singleProductCache.set(id, newProduct);
+
+    if (id === 'new') return;
 
     this.productsCache.forEach(productsResponse => {
       productsResponse.products = productsResponse.products.map(product => product.id === id ? newProduct : product );
