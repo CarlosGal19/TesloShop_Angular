@@ -12,6 +12,14 @@
         class="w-full object-cover"
       />
     </div>
+    } @empty {
+    <div class="swiper-slide">
+      <img
+        [src]="'' | productImage"
+        alt="Producto"
+        class="w-full object-cover"
+      />
+    </div>
     }
   </div>
   <!-- If we need pagination -->
