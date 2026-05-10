@@ -1,4 +1,4 @@
-import { Component, inject, input, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, input, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ProductCarousel } from '@products/components/product-carousel/product-carousel';
 import { IProduct } from '@products/interfaces/product-response.interface';
@@ -21,6 +21,11 @@ export class ProductDetails implements OnInit {
   product = input.required<IProduct>();
 
   wasSaved = signal(false);
+  temporalImages = signal<string[]>([]);
+
+  carouselImages = computed(() => {
+    return [...this.product().images, ...this.temporalImages()]
+  })
 
   sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 
@@ -31,7 +36,7 @@ export class ProductDetails implements OnInit {
     price: [0, [Validators.required, Validators.min(0)]],
     stock: [0, [Validators.required, Validators.min(0)]],
     sizes: [['']],
-    images: [[]],
+    images: [[] as string[]],
     tags: [''],
     gender: ['men', [Validators.required, Validators.pattern(/men|women|kid|unisex/)]],
   });
@@ -93,5 +98,15 @@ export class ProductDetails implements OnInit {
     }
 
     this.productForm.patchValue({ sizes: currentSizes });
+  }
+
+  onFilesChanges(event: Event) {
+    const files = (event.target as HTMLInputElement).files;
+
+    if (!files) return;
+
+    const imageUrls =  Array.from(files ?? []).map(f => URL.createObjectURL(f));
+
+    this.temporalImages.set(imageUrls);
   }
 }
