@@ -1,10 +1,12 @@
 import { Component, inject, input, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ProductCarousel } from "@products/components/product-carousel/product-carousel";
+import { ProductCarousel } from '@products/components/product-carousel/product-carousel';
 import { IProduct } from '@products/interfaces/product-response.interface';
 import { ProductsService } from '@products/services/products.service';
 import { FormUtils } from '@utils/form-utils';
-import { FormErrorLabel } from "@shared/components/form-error-label/form-error-label";
+import { FormErrorLabel } from '@shared/components/form-error-label/form-error-label';
+import { Router } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'product-details',
@@ -14,66 +16,75 @@ import { FormErrorLabel } from "@shared/components/form-error-label/form-error-l
 export class ProductDetails implements OnInit {
   formBuilder = inject(FormBuilder);
   productsService = inject(ProductsService);
+  router = inject(Router);
 
   product = input.required<IProduct>();
 
   sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 
   productForm = this.formBuilder.group({
-      title: ['', Validators.required],
-      description: ['', Validators.required],
-      slug: [
-        '',
-        [Validators.required, Validators.pattern(FormUtils.slugPattern)],
-      ],
-      price: [0, [Validators.required, Validators.min(0)]],
-      stock: [0, [Validators.required, Validators.min(0)]],
-      sizes: [['']],
-      images: [[]],
-      tags: [''],
-      gender: [
-        'men',
-        [Validators.required, Validators.pattern(/men|women|kid|unisex/)],
-      ],
-    });
+    title: ['', Validators.required],
+    description: ['', Validators.required],
+    slug: ['', [Validators.required, Validators.pattern(FormUtils.slugPattern)]],
+    price: [0, [Validators.required, Validators.min(0)]],
+    stock: [0, [Validators.required, Validators.min(0)]],
+    sizes: [['']],
+    images: [[]],
+    tags: [''],
+    gender: ['men', [Validators.required, Validators.pattern(/men|women|kid|unisex/)]],
+  });
 
   ngOnInit() {
     this.setFormData(this.product());
   }
 
   setFormData(formLike: Partial<IProduct>) {
-    this.productForm.reset(formLike as any)
+    this.productForm.reset(formLike as any);
     // this.productForm.patchValue(formLike as any);
-    this.productForm.patchValue({ 'tags': formLike.tags?.join('') });
+    this.productForm.patchValue({ tags: formLike.tags?.join('') });
   }
 
-  onSubmit() {
+  async onSubmit() {
     const isValid = this.productForm.valid;
     this.productForm.markAllAsTouched();
     if (!isValid) return;
 
-    const formData = this.productForm.value
+    const formData = this.productForm.value;
 
     const partialProduct: Partial<IProduct> = {
       ...(formData as any),
-      tags: formData.tags?.toLocaleLowerCase().split(',').map(t => t.trim()) ?? []
+      tags:
+        formData.tags
+          ?.toLocaleLowerCase()
+          .split(',')
+          .map((t) => t.trim()) ?? [],
+    };
+
+    const productId = this.product().id;
+
+    if (productId === 'new') {
+
+      const product = await firstValueFrom(
+        this.productsService.createProduct(partialProduct)
+      );
+
+      this.router.navigate(['/admin/product', product.id]);
+    } else {
+      await firstValueFrom(
+        this.productsService.updateProduct(productId, partialProduct)
+      );
     }
-
-    const productId = this.product().id
-
-    this.productsService.updateProduct(productId, partialProduct)?.subscribe();
   }
 
   onSizeChanges(size: string) {
-    const currentSizes = [...this.productForm.value.sizes ?? []];
+    const currentSizes = [...(this.productForm.value.sizes ?? [])];
 
     if (currentSizes.includes(size)) {
-      currentSizes.splice(currentSizes.indexOf(size), 1)
+      currentSizes.splice(currentSizes.indexOf(size), 1);
     } else {
       currentSizes.push(size);
     }
 
     this.productForm.patchValue({ sizes: currentSizes });
-
   }
 }
