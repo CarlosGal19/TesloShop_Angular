@@ -64,6 +64,18 @@ export class ProductsService {
 
     return this.http.patch<IProduct>(`${baseUrl}/products/${id}`, {
       ...likeProduct
+    }).pipe(
+      tap(product => {
+        this.updateCache(id, product);
+      })
+    )
+  }
+
+  updateCache(id: string, newProduct: IProduct) {
+    this.singleProductCache.set(id, newProduct);
+
+    this.productsCache.forEach(productsResponse => {
+      productsResponse.products = productsResponse.products.map(product => product.id === id ? newProduct : product );
     })
   }
 }
