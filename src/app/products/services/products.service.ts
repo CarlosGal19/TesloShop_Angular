@@ -1,6 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
-import { IProduct, IProductsResponse } from "@products/interfaces/product-response.interface";
+import { IUser } from "@auth/interfaces/user.interface";
+import { IGender, IProduct, IProductsResponse } from "@products/interfaces/product-response.interface";
 import { Observable, of, tap } from "rxjs";
 import { environment } from "src/environments/environment";
 
@@ -11,6 +12,20 @@ interface IOptions {
   offset?: number;
   gender?: 'men' | 'women' | 'kid' | 'unisex'
 }
+
+const emptyProduct: IProduct = {
+  id: 'new',
+  title: '',
+  price: 0,
+  description: '',
+  slug: '',
+  stock: 0,
+  sizes: [],
+  gender: IGender.Men,
+  tags: [],
+  images: [],
+  user: {} as IUser,
+};
 
 @Injectable({
   providedIn: 'root'
@@ -46,6 +61,11 @@ export class ProductsService {
   }
 
   getProductByTerm(term: string): Observable<IProduct> {
+
+    if (term === 'new') {
+      return of(emptyProduct);
+    }
+
     const mapKey = term;
 
     if (this.singleProductCache.get(mapKey)) {
