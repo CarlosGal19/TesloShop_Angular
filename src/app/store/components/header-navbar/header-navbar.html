@@ -24,6 +24,9 @@
     </ul>
   </div>
   <div class="navbar-end gap-4">
+    @if (authService.user()?.roles?.includes('admin')) {
+      <a href="/admin" class="btn text-accent">Admin panel</a>
+    }
     @if ( authService.authStatus() === 'auth' ) {
     <button class="btn btn-ghost">
       {{ authService.user()?.fullName }}
