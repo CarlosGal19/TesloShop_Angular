@@ -1,8 +1,11 @@
+import { firstValueFrom } from 'rxjs';
 import {
   AfterViewInit,
   Component,
   ElementRef,
   input,
+  OnChanges,
+  SimpleChanges,
   viewChild,
 } from '@angular/core';
 
@@ -27,11 +30,25 @@ import { ProductImagePipe } from '@products/pipes/product-image-pipe';
 
   `,
 })
-export class ProductCarousel implements AfterViewInit {
+export class ProductCarousel implements AfterViewInit, OnChanges {
   images = input.required<string[]>();
   swiperDiv = viewChild.required<ElementRef>('swiperDiv');
+  swipper: Swiper | null = null;
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['images'].firstChange) return;
+
+    if (!this.swipper) return;
+    this.swipper.destroy(true, true);
+    this.initSwipper()
+
+  }
 
   ngAfterViewInit(): void {
+    this.initSwipper()
+  }
+
+  initSwipper() {
     const element = this.swiperDiv().nativeElement;
     if (!element) return;
 
@@ -58,5 +75,7 @@ export class ProductCarousel implements AfterViewInit {
         el: '.swiper-scrollbar',
       },
     });
+    this.swipper = swiper;
+
   }
 }
