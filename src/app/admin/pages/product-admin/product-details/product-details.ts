@@ -1,4 +1,4 @@
-import { Component, inject, input, OnInit } from '@angular/core';
+import { Component, inject, input, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ProductCarousel } from '@products/components/product-carousel/product-carousel';
 import { IProduct } from '@products/interfaces/product-response.interface';
@@ -19,6 +19,8 @@ export class ProductDetails implements OnInit {
   router = inject(Router);
 
   product = input.required<IProduct>();
+
+  wasSaved = signal(false);
 
   sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 
@@ -74,6 +76,11 @@ export class ProductDetails implements OnInit {
         this.productsService.updateProduct(productId, partialProduct)
       );
     }
+
+    this.wasSaved.set(true);
+    setTimeout(() => {
+      this.wasSaved.set(false);
+    }, 3000)
   }
 
   onSizeChanges(size: string) {
