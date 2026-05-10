@@ -9,15 +9,17 @@ const baseUrl = environment.baseUrl;
 export class ProductImagePipe implements PipeTransform {
 
   transform(value: string | string[]): string {
-    if (Array.isArray(value)) {
+
+    if ((Array.isArray(value) && value.length === 0)  || !value) {
+      return `/assets/images/placeholder.jpg`;
+    }
+
+    if (Array.isArray(value) && value.length > 0) {
       return `${baseUrl}/files/product/${value[0]}`
     }
 
-    if (value !== ''){
-      return `${baseUrl}/files/product/${value}`
-    }
+    return `${baseUrl}/files/product/${value}`
 
-    return `/assets/images/placeholder.jpg`;
   }
 
 }
