@@ -90,6 +90,7 @@ export class ProductsService {
           ...likeProduct,
           images: [...currentImages, ...imageNames]
         })),
+        // switchMap receives data from the last observable and subscribes to the observable you put inside
         switchMap(updatedProduct =>
           this.http.patch<IProduct>(`${baseUrl}/products/${id}`, updatedProduct)
         ),
@@ -134,6 +135,7 @@ export class ProductsService {
     const uploadedObservables = Array.from(imagesList)
       .map(image => this.uploadSingleImage(image));
 
+    // forkJoin waits until all observables return a value
     return forkJoin(uploadedObservables)
   }
 
